@@ -1,0 +1,2 @@
+Autorid: Ruslan Kozlov ja Timur Shahbazov
+Programmi eesmärk: Selle programmi eesmärk on aidata inimestel teada saada, milline on ilm, inimene saab lihtsalt programmi alla laadida ja linna valides teada saada tänase päeva ilm. Ilm on kirjutatud esmalt lühikirjeldusega ja seejärel täieliku kirjeldusega koos õhuniiskuse ja õhurõhuga atmosfäärides. 
