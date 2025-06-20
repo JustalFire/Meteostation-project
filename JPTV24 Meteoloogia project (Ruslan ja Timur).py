@@ -3,11 +3,11 @@ from tkinter import ttk, messagebox
 import urllib.request
 import json
 
-API_KEY = "e6a0b01b5cf0014491cb954b85cef04a"  # Ключ для доступа к OpenWeatherMap API
-UNITS = "metric"  # Единицы измерения цельсии
-LANG = "ru"       # Язык ответов API
+API_KEY = "e6a0b01b5cf0014491cb954b85cef04a"
+UNITS = "metric"
+LANG = "ru"
 
-# Словарь городов с их данными ID, широта и долгота
+
 CITIES = {
     "Таллинн": {"id": 588409, "lat": 59.4370, "lon": 24.7536},
     "Хельсинки": {"id": 658226, "lat": 60.1699, "lon": 24.9384},
@@ -17,7 +17,7 @@ CITIES = {
     "Санкт-Петербург": {"id": 498817, "lat": 59.9311, "lon": 30.3609},
     "Нарва": {"id": 588454, "lat": 59.3772, "lon": 28.1904},
 }
-BASE_URL = "https://api.openweathermap.org/data/2.5/"  # Базовый URL API
+BASE_URL = "https://api.openweathermap.org/data/2.5/"
 
 def get_data(url, params):
     """
@@ -26,17 +26,17 @@ def get_data(url, params):
     param params Параметры запроса
     return JSON-объект с данными
     """
-    # Формирует строку запроса из параметров
+    #Формирует строку запроса из параметров
     query = urllib.parse.urlencode(params)
-    # Собирает полный URL с параметрами
+    #Собирает полный URL с параметрами
     full_url = f"{url}?{query}"
     
-    # Выполняет HTTP-запрос
+    #Выполняет HTTP-запрос
     with urllib.request.urlopen(full_url) as res:
-        # Читаем и декодируем ответ
+        #Читает и декодирует ответ
         data = res.read().decode('utf-8')
     
-    # Преобразует JSON строку в объект Python
+    #Преобразует JSON строку в объект Python
     return json.loads(data)
 
 def get_weather(city_id):
@@ -45,25 +45,25 @@ def get_weather(city_id):
     param city_id ID города в OpenWeatherMap
     return Форматированная строка с данными о погоде
     """
-    # Параметры для запроса текущей погоды
+    #Параметры для запроса текущей погоды
     params = {
-        "id": city_id,     # ID города
-        "appid": API_KEY,   # Ключ API
-        "units": UNITS,     # Единицы измерения
-        "lang": LANG        # Язык ответа
+        "id": city_id,
+        "appid": API_KEY,
+        "units": UNITS,
+        "lang": LANG  
     }
     
-    # Получаем данные о погоде
+   
     data = get_data(BASE_URL + "weather", params)
     
-    # Извлекает нужные данные из JSON ответа:
-    desc = data['weather'][0]['description']  # Описание погоды
-    temp = data['main']['temp']               # Текущая температура
-    feels = data['main']['feels_like']        # Ощущаемая температура
-    hum = data['main']['humidity']            # Влажность (%)
-    press = data['main']['pressure']          # Атмосферное давление
+    #Извлекает нужные данные из JSON ответа
+    desc = data['weather'][0]['description']
+    temp = data['main']['temp']
+    feels = data['main']['feels_like'] 
+    hum = data['main']['humidity'] #Влажность (%)
+    press = data['main']['pressure'] 
     
-    # Форматирует результат в читаемую строку
+    #Форматирует результат в читаемую строку
     return (
         f"{desc}, \nТемп: {temp}°C (ощущаеться как: {feels}°C), "
         f"\nВлажность: {hum}%, \nДавление: {press} АТМ"
@@ -74,78 +74,72 @@ class WeatherApp(tk.Tk):
     
     def __init__(self):
         super().__init__()
-        # Настройка главного окна
-        self.title("Meteostation Project by Ruslan and Timur")  # Заголовок окна
-        self.geometry("500x400")     # Размер окна
+        self.title("Meteostation Project by Ruslan and Timur")
+        self.geometry("500x400")
         
-        # Переменная для выбранного города
+        #Переменная для выбранного города
         self.city_var = tk.StringVar()
-        # Устанавливает первый город по умолчанию
+        #Устанавливает первый город по умолчанию
         self.city_var.set(list(CITIES.keys())[0])
-        
-        # Создает интерфейс
         self.create_ui()
     
     def create_ui(self):
         """Создает пользовательский интерфейс"""
-        # Основной фрейм для содержимого
         frame = ttk.Frame(self)
         frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-        
-        # Метка для выбора города
         ttk.Label(frame, text="Город:").pack(pady=5)
         
-        # Выпадающий список для выбора города
+        #Выпадающий список для выбора города
         city_menu = ttk.OptionMenu(
             frame,
-            self.city_var,          # Привязанная переменная
-            self.city_var.get(),    # Текущее значение
-            *CITIES.keys()          # Варианты выбора
+            self.city_var,          #Привязанная переменная
+            self.city_var.get(),    #Изначально заданный город
+            *CITIES.keys()          #Города которые можно выбрать
         )
         city_menu.pack(pady=5)
         
-        # Кнопка для запроса погоды
+        #Кнопка для запроса погоды
         btn = ttk.Button(
             frame,
-            text="Погода сейчас",       # Текст кнопки
-            command=self.show_weather   # Обработчик клика
+            text="Погода сейчас",       #Текст кнопки
+            command=self.show_weather   #Обработчик клика
         )
         btn.pack(pady=10)
         
-        # Текстовое поле для вывода погоды
+        #Текстовое поле для вывода погоды
         self.weather_txt = tk.Text(
             frame, 
-            height=8,   # Высота в строках
-            width=50    # Ширина в символах
+            height=8,
+            width=50
         )
         self.weather_txt.pack(pady=10)
     
     def show_weather(self):
         """Обработчик для отображения текущей погоды"""
-        # Получает выбранный город
+        #Получает выбранный город
         city = self.city_var.get()
         
         try:
-            # Получает ID города из словаря
+            #Получает ID города из словаря
             city_id = CITIES[city]["id"]
-            # Запрашивает данные о погоде
+            #Запрашивает данные о погоде
             weather_info = get_weather(city_id)
             
-            # Очищает текстовое поле
+            #Очищает текстовое поле
             self.weather_txt.delete("1.0", tk.END)
-            # Вставляет отформатированные данные
+            #Вставляет отформатированные данные
             self.weather_txt.insert(
                 "1.0", 
                 f"Погода в {city}:\n{weather_info}"
             )
         except Exception as e:
-            # Обработка ошибок с показом сообщения
+            #бработка ошибок с показом сообщения
             messagebox.showerror(
                 "Ошибка", 
                 f"Ошибка данных: {str(e)}"
             )
 
-# Точка входа в приложение
+#Точка входа в приложение
 if __name__ == '__main__':
-    app = WeatherApp()  # Создаем экземпляр приложения
-    app.mainloop()      # Запускаем главный цикл обработки событий
+    app = WeatherApp()  #Создаёт прилоение
+    app.mainloop()      #Запускает обработку
